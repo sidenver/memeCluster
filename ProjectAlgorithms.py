@@ -61,8 +61,10 @@ distMat = {}  # Dictionary of Distance Matrices. distMat [bucketID] => Distance 
 bucketPhrases = {}  # Dictionary of Phrases. phraseList [bucketID] => Phrase List in the bucket
 clusterAssignment = {}  # clusterAssignment [bucketID] => {dict[phrase] => ClusterID }
 
+totalBuckNum = len(buckets)
 
-for key in buckets.keys():
+for idx, key in enumerate(buckets):
+    print 'processing bucket: ' + idx + '/' + totalBuckNum
     # Some threshold can be added here
     elem = buckets[key]
     bucketPhrases[key] = []
@@ -71,9 +73,9 @@ for key in buckets.keys():
         bucketPhrases[key].append(elem[i])
         for j in range(i + 1, len(elem)):
             distMat[key][i][j] = distMat[key][j][i] = NeedleWunsch(elem[i], elem[j])
-            print i + 1, '-', j + 1, '  : ', NeedleWunsch(elem[i], elem[j])
+            # print i + 1, '-', j + 1, '  : ', distMat[key][j][i]
 
-for key in buckets.keys():
+for key in buckets:
     clusterAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key])
 
 pickle.dump(clusterAssignment, open('output.out', "wb"))
