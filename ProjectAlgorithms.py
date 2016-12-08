@@ -13,8 +13,17 @@ filename = 'updated_clusters.json'
 buckets = json.loads(open(filename).read())
 
 
-def diffCluster(matDist, threshold, labels):
-    linkage_matrix = ward(matDist)
+def diffCluster(matDist, threshold, labels,clusteringType):
+    if clusteringType==1:
+        linkage_matrix = ward(matDist)
+    elif clusteringType==2:
+        linkage_matrix = single(matDist)
+    elif clusteringType==3:
+        linkage_matrix = complete(matDist)
+    elif clusteringType==4:
+        linkage_matrix = average(matDist)
+    else:
+        return {}
     cluster_labels = fcluster(linkage_matrix, threshold)
     clusters_dict = defaultdict(list)
     for sent, cluster_id in zip(cluster_labels, labels):
@@ -59,7 +68,7 @@ def SmithWaterman(str1, str2):
 
 distMat = {}  # Dictionary of Distance Matrices. distMat [bucketID] => Distance Matrix
 bucketPhrases = {}  # Dictionary of Phrases. phraseList [bucketID] => Phrase List in the bucket
-clusterAssignment = {}  # clusterAssignment [bucketID] => {dict[phrase] => ClusterID }
+
 
 totalBuckNum = str(len(buckets))
 
@@ -76,9 +85,22 @@ for idx, key in enumerate(buckets):
             # print i + 1, '-', j + 1, '  : ', distMat[key][j][i]
     numpy.savetxt("/fs/clip-scratch/shing/meme/{}.csv".format(key), distMat[key], delimiter=",")
 
-for key in buckets:
-    clusterAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key])
+    
+## Clustering starts here ....
+wardAssignment = {}  # clusterAssignment [bucketID] => {dict[phrase] => ClusterID }
+singleAssignment={} #nearest neighbor
+completeAssignment={} #farthest neighbor
+averageAssignment={} #Average distance
 
-pickle.dump(clusterAssignment, open('output.out', "wb"))
+for key in buckets:
+    wardAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key],1)
+    singleAssignment[key]= diffCluster(distMat[key], 0.5, bucketPhrases[key],2)
+    completeAssignment[key]= diffCluster(distMat[key], 0.5, bucketPhrases[key],3)
+    averageAssignment[key]= diffCluster(distMat[key], 0.5, bucketPhrases[key],4)
+
+pickle.dump(wardAssignment, open('wardOutput.out', "wb"))
+pickle.dump(singleAssignment, open('singleOutput.out', "wb"))
+pickle.dump(completeAssignment, open('completeOutput.out', "wb"))
+pickle.dump(averageAssignment, open('averageOutput.out', "wb"))
 # answer=pickle.load(open('output.out',"rb"))
 # print clusterAssignment
