@@ -61,10 +61,10 @@ distMat = {}  # Dictionary of Distance Matrices. distMat [bucketID] => Distance 
 bucketPhrases = {}  # Dictionary of Phrases. phraseList [bucketID] => Phrase List in the bucket
 clusterAssignment = {}  # clusterAssignment [bucketID] => {dict[phrase] => ClusterID }
 
-totalBuckNum = len(buckets)
+totalBuckNum = str(len(buckets))
 
 for idx, key in enumerate(buckets):
-    print 'processing bucket: ' + idx + '/' + totalBuckNum
+    print 'processing bucket: {}/{}'.format(str(idx), totalBuckNum)
     # Some threshold can be added here
     elem = buckets[key]
     bucketPhrases[key] = []
