@@ -74,7 +74,7 @@ for idx, key in enumerate(buckets):
         for j in range(i + 1, len(elem)):
             distMat[key][i][j] = distMat[key][j][i] = NeedleWunsch(elem[i], elem[j])
             # print i + 1, '-', j + 1, '  : ', distMat[key][j][i]
-    numpy.savetxt("{}.csv".format(key), distMat[key], delimiter=",")
+    numpy.savetxt("/fs/clip-scratch/shing/meme/{}.csv".format(key), distMat[key], delimiter=",")
 
 for key in buckets:
     clusterAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key])
