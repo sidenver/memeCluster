@@ -43,7 +43,8 @@ class ClusterEvaluator(object):
             for goldId, clusterGold in enumerate(self.gold):
                 mutualCount = idCounter[goldId]
                 goldCount = float(len(clusterGold))
-                mutualInfo += mutualCount/self.totalNum*math.log(self.totalNum*mutualCount/(resultCount*goldCount))
+                if not self.totalNum*mutualCount/(resultCount*goldCount) <= 0:
+                    mutualInfo += mutualCount/self.totalNum*math.log(self.totalNum*mutualCount/(resultCount*goldCount))
 
         return mutualInfo
 
