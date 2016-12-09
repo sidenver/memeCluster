@@ -58,7 +58,7 @@ class ClusterEvaluator(object):
         Thus, we cannot use purity to trade off the quality of the clustering
         against the number of clusters.
         """
-        maxCountList = [Counter(indxList).most_common(1)[1] for indxList in self.indxListList]
+        maxCountList = [Counter(indxList).most_common(1)[0][1] for indxList in self.indxListList]
         return sum(maxCountList)/self.totalNum
 
     def calNMI(self):
