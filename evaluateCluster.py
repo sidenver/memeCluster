@@ -11,6 +11,8 @@ class ClusterEvaluator(object):
         self.gold = gold
         self.result = result
         self.totalNum = float(sum([len(cluster) for cluster in self.gold]))
+        print 'gold count: ', self.totalNum
+        print 'result count: ', float(sum([len(cluster) for cluster in self.result]))
         self.sentence2GoldId = {}
         self.buildSentence2GoldId()
         self.indxListList = self.cluster2Indx()
