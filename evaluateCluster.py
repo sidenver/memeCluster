@@ -129,7 +129,8 @@ def makeId2sentenceList(dictOfdictList):
     id2sentenceList = defaultdict(list)
     for bucketid in dictOfdictList:
         for sentence in dictOfdictList[bucketid]:
-            id2sentenceList[bucketid + '_' + str(dictOfdictList[bucketid][sentence][0])].append(sentence)
+            for assigment in dictOfdictList[bucketid][sentence]:
+                id2sentenceList[bucketid + '_' + str(assigment)].append(sentence)
     listofSentenceList = []
     for newId in id2sentenceList:
         listofSentenceList.append(id2sentenceList[newId])
