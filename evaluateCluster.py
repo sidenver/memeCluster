@@ -17,6 +17,25 @@ class ClusterEvaluator(object):
         self.sentence2GoldId = {}
         self.buildSentence2GoldId()
         self.indxListList = self.cluster2Indx()
+        self.buildLabels()
+
+    def buildLabels(self):
+        resultDict = {}
+        goldDict = {}
+        sentenceList = []
+        for idx, cluster in enumerate(self.result):
+            for sentence in cluster:
+                resultDict[sentence] = idx
+                sentenceList.append(sentence)
+
+        for idx, cluster in enumerate(self.gold):
+            for sentence in cluster:
+                goldDict[sentence] = idx
+        self.resultList = []
+        self.goldList = []
+        for sentence in sentenceList:
+            self.resultList.append(resultDict[sentence])
+            self.goldList.append(goldDict[sentence])
 
     def buildSentence2GoldId(self):
         for idx, cluster in enumerate(self.gold):
@@ -69,10 +88,11 @@ class ClusterEvaluator(object):
         """
         normalized mutual information or NMI
         """
-        mutualInfo = self.calMutualInfo()
-        entropyGold = self.calEntropy(self.gold)
-        entropyResult = self.calEntropy(self.result)
-        return mutualInfo/((entropyGold+entropyResult)/2.0)
+        # mutualInfo = self.calMutualInfo()
+        # entropyGold = self.calEntropy(self.gold)
+        # entropyResult = self.calEntropy(self.result)
+        # return mutualInfo/((entropyGold+entropyResult)/2.0)
+        return metrics.adjusted_mutual_info_score(self.goldList, self.resultList)
 
     def ncr(self, n, r):
         r = min(r, n-r)
@@ -89,25 +109,26 @@ class ClusterEvaluator(object):
         RI = ---------------
                TP+TN+FP+FN
         """
-        tp_fp = sum([self.ncr(len(cluster), 2) for cluster in self.indxListList if len(cluster) >= 2])
-        countList = [Counter(indxList) for indxList in self.indxListList]
-        tp = sum([sum([self.ncr(count, 2) for idx, count in counter.most_common() if count >= 2]) for counter in countList])
-        fp = tp_fp - tp
-        tn_fn = 0
-        for idx, cluster in enumerate(self.indxListList[:-1]):
-            thisClusterCount = len(cluster)
-            afterClusterCount = sum([len(afterCluster) for afterCluster in self.indxListList[idx+1:]])
-            tn_fn += thisClusterCount*afterClusterCount
-        fn = 0
-        for idx, counter in enumerate(countList[:-1]):
-            for key in counter:
-                afterClusterCount = sum([afterCounter[key] for afterCounter in countList[idx+1:]])
-                fn += afterClusterCount*counter[key]
-        tn = tn_fn - fn
-        accuracy = (tp+tn)/float(tp+tn+fp+fn)
-        precision = tp/float(tp+fp)
-        recall = tp/float(tp+fn)
-        return accuracy, precision, recall
+        # tp_fp = sum([self.ncr(len(cluster), 2) for cluster in self.indxListList if len(cluster) >= 2])
+        # countList = [Counter(indxList) for indxList in self.indxListList]
+        # tp = sum([sum([self.ncr(count, 2) for idx, count in counter.most_common() if count >= 2]) for counter in countList])
+        # fp = tp_fp - tp
+        # tn_fn = 0
+        # for idx, cluster in enumerate(self.indxListList[:-1]):
+        #     thisClusterCount = len(cluster)
+        #     afterClusterCount = sum([len(afterCluster) for afterCluster in self.indxListList[idx+1:]])
+        #     tn_fn += thisClusterCount*afterClusterCount
+        # fn = 0
+        # for idx, counter in enumerate(countList[:-1]):
+        #     for key in counter:
+        #         afterClusterCount = sum([afterCounter[key] for afterCounter in countList[idx+1:]])
+        #         fn += afterClusterCount*counter[key]
+        # tn = tn_fn - fn
+        # accuracy = (tp+tn)/float(tp+tn+fp+fn)
+        # precision = tp/float(tp+fp)
+        # recall = tp/float(tp+fn)
+        # return accuracy, precision, recall
+        return metrics.adjusted_rand_score(self.goldList, self.resultList)
 
 
 def loadAndFilterGold(filename, listofSentenceList):
@@ -144,7 +165,6 @@ if __name__ == '__main__':
     gold = loadAndFilterGold('raw_phrases', answer)
     print 'loaded gold'
     clusterEvaluator = ClusterEvaluator(gold, answer)
-    purity = clusterEvaluator.calPurity()
-    nmi = clusterEvaluator.calNMI()
-    # ri = clusterEvaluator.calRI()
-    print purity, nmi
+    print 'purity', clusterEvaluator.calPurity()
+    print 'NMI', clusterEvaluator.calNMI()
+    print 'adjust RI', clusterEvaluator.calRI()
