@@ -2,6 +2,7 @@ from collections import Counter, defaultdict
 import math
 import operator as op
 import pickle
+from sklearn import metrics
 
 
 class ClusterEvaluator(object):
@@ -145,5 +146,5 @@ if __name__ == '__main__':
     clusterEvaluator = ClusterEvaluator(gold, answer)
     purity = clusterEvaluator.calPurity()
     nmi = clusterEvaluator.calNMI()
-    ri = clusterEvaluator.calRI()
-    print purity, nmi, ri
+    # ri = clusterEvaluator.calRI()
+    print purity, nmi
