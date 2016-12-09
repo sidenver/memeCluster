@@ -104,13 +104,18 @@ averageAssignment = {}  # Average distance
 
 for key in bucketPhrases:
     wardAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 1)
-    singleAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 2)
-    completeAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 3)
-    averageAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 4)
-
 pickle.dump(wardAssignment, open('wardOutput.out', "wb"))
+
+for key in bucketPhrases:
+    singleAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 2)
 pickle.dump(singleAssignment, open('singleOutput.out', "wb"))
+
+for key in bucketPhrases:
+    completeAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 3)
 pickle.dump(completeAssignment, open('completeOutput.out', "wb"))
+
+for key in bucketPhrases:
+    averageAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 4)
 pickle.dump(averageAssignment, open('averageOutput.out', "wb"))
 # answer=pickle.load(open('output.out',"rb"))
 # print clusterAssignment
