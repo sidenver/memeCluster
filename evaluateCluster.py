@@ -1,6 +1,7 @@
-from collections import Counter
+from collections import Counter, defaultdict
 import math
 import operator as op
+import pickle
 
 
 class ClusterEvaluator(object):
@@ -103,3 +104,42 @@ class ClusterEvaluator(object):
         precision = tp/float(tp+fp)
         recall = tp/float(tp+fn)
         return accuracy, precision, recall
+
+
+def loadAndFilterGold(filename, listofSentenceList):
+    sentenceSet = set()
+    for sentenceList in listofSentenceList:
+        sentenceSet.update(set(sentenceList))
+    id2sentenceList = defaultdict(list)
+    with open(filename, 'r') as f:
+        for idx, line in enumerate(f):
+            if not idx == 0:
+                field = line.split('\t')
+                if field[2] in sentenceSet:
+                    id2sentenceList[field[0]].append(field[2])
+    listofSentenceList = []
+    for newId in id2sentenceList:
+        listofSentenceList.append(id2sentenceList[newId])
+    return listofSentenceList
+
+
+def makeId2sentenceList(dictOfdictList):
+    id2sentenceList = defaultdict(list)
+    for bucketid in dictOfdictList:
+        for sentence in dictOfdictList[bucketid]:
+            id2sentenceList[bucketid + '_' + str(dictOfdictList[bucketid][sentence][0])].append(sentence)
+    listofSentenceList = []
+    for newId in id2sentenceList:
+        listofSentenceList.append(id2sentenceList[newId])
+    return listofSentenceList
+
+if __name__ == '__main__':
+    answer = makeId2sentenceList(pickle.load(open('averageOutput.out', "rb")))
+    print 'loaded answer'
+    gold = loadAndFilterGold('raw_phrases', answer)
+    print 'loaded gold'
+    clusterEvaluator = ClusterEvaluator(gold, answer)
+    purity = clusterEvaluator.calPurity()
+    nmi = clusterEvaluator.calNMI()
+    ri = clusterEvaluator.calRI()
+    print purity, nmi, ri
