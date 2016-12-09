@@ -92,7 +92,7 @@ class ClusterEvaluator(object):
         # entropyGold = self.calEntropy(self.gold)
         # entropyResult = self.calEntropy(self.result)
         # return mutualInfo/((entropyGold+entropyResult)/2.0)
-        return metrics.adjusted_mutual_info_score(self.goldList, self.resultList)
+        return metrics.normalized_mutual_info_score(self.goldList, self.resultList)
 
     def ncr(self, n, r):
         r = min(r, n-r)
