@@ -73,7 +73,7 @@ for idx, key in enumerate(buckets):
         bucketPhrases[key].append(elem[i])
         for j in range(i + 1, len(elem)):
             distMat[key][i][j] = distMat[key][j][i] = NeedleWunsch(elem[i], elem[j])
-            # print i + 1, '-', j + 1, '  : ', distMat[key][j][i]
+            # print i + 1, '-', j + 1, '  : ', NeedleWunsch(elem[i], elem[j])
     numpy.savetxt("/fs/clip-scratch/shing/meme/{}.csv".format(key), distMat[key], delimiter=",")
 
 for key in buckets:
