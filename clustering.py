@@ -73,14 +73,18 @@ bucketPhrases = {}  # Dictionary of Phrases. phraseList [bucketID] => Phrase Lis
 
 totalBuckNum = str(len(buckets))
 
-for filename in os.listdir("/fs/clip-scratch/shing/meme/"):
+path = "/fs/clip-scratch/shing/meme/"
+
+for filename in os.listdir(path):
     if filename.split('.')[-1] == 'csv':
         key = filename.split('.')[0]
-        distMat[key] = numpy.loadtxt(open(filename, "rb"), delimiter=",")
+        distMat[key] = numpy.loadtxt(open(path + filename, "rb"), delimiter=",")
         elem = buckets[key]
         bucketPhrases[key] = []
         for i in range(0, len(elem)):
             bucketPhrases[key].append(elem[i])
+
+print 'loaded {} csv files'.format(str(len(distMat)))
 
 # for idx, key in enumerate(buckets):
 #     print 'processing bucket: {}/{}'.format(str(idx), totalBuckNum)
@@ -106,16 +110,24 @@ for key in bucketPhrases:
     wardAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 1)
 pickle.dump(wardAssignment, open('wardOutput.out', "wb"))
 
+print 'ward done'
+
 for key in bucketPhrases:
     singleAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 2)
 pickle.dump(singleAssignment, open('singleOutput.out', "wb"))
+
+print 'single done'
 
 for key in bucketPhrases:
     completeAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 3)
 pickle.dump(completeAssignment, open('completeOutput.out', "wb"))
 
+print 'complete done'
+
 for key in bucketPhrases:
     averageAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 4)
 pickle.dump(averageAssignment, open('averageOutput.out', "wb"))
+
+print 'average done'
 # answer=pickle.load(open('output.out',"rb"))
 # print clusterAssignment
