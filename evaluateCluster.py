@@ -161,7 +161,34 @@ def makeId2sentenceList(dictOfdictList):
 
 if __name__ == '__main__':
     answer = makeId2sentenceList(pickle.load(open('averageOutput.out', "rb")))
-    print 'loaded answer'
+    print 'loaded answer average'
+    gold = loadAndFilterGold('raw_phrases', answer)
+    print 'loaded gold'
+    clusterEvaluator = ClusterEvaluator(gold, answer)
+    print 'purity', clusterEvaluator.calPurity()
+    print 'NMI', clusterEvaluator.calNMI()
+    print 'adjust RI', clusterEvaluator.calRI()
+
+    answer = makeId2sentenceList(pickle.load(open('wardOutput.out', "rb")))
+    print 'loaded answer ward'
+    gold = loadAndFilterGold('raw_phrases', answer)
+    print 'loaded gold'
+    clusterEvaluator = ClusterEvaluator(gold, answer)
+    print 'purity', clusterEvaluator.calPurity()
+    print 'NMI', clusterEvaluator.calNMI()
+    print 'adjust RI', clusterEvaluator.calRI()
+
+    answer = makeId2sentenceList(pickle.load(open('singleOutput.out', "rb")))
+    print 'loaded answer single'
+    gold = loadAndFilterGold('raw_phrases', answer)
+    print 'loaded gold'
+    clusterEvaluator = ClusterEvaluator(gold, answer)
+    print 'purity', clusterEvaluator.calPurity()
+    print 'NMI', clusterEvaluator.calNMI()
+    print 'adjust RI', clusterEvaluator.calRI()
+
+    answer = makeId2sentenceList(pickle.load(open('completeOutput.out', "rb")))
+    print 'loaded answer complete'
     gold = loadAndFilterGold('raw_phrases', answer)
     print 'loaded gold'
     clusterEvaluator = ClusterEvaluator(gold, answer)
