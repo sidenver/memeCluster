@@ -142,10 +142,10 @@ def loadAndFilterGold(filename, listofSentenceList):
                 field = line.split('\t')
                 if field[2] in sentenceSet:
                     id2sentenceList[field[0]].append(field[2])
-    listofSentenceList = []
+    listofGoldSentenceList = []
     for newId in id2sentenceList:
-        listofSentenceList.append(id2sentenceList[newId])
-    return listofSentenceList
+        listofGoldSentenceList.append(id2sentenceList[newId])
+    return listofGoldSentenceList
 
 
 def makeId2sentenceList(dictOfdictList):

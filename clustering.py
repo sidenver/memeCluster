@@ -50,8 +50,10 @@ for filename in os.listdir(path):
         bucketPhrases[key] = []
         for i in range(0, len(elem)):
             bucketPhrases[key].append(elem[i])
-
 print 'loaded {} csv files'.format(str(len(distMat)))
+
+gold = evaluateCluster.loadAndFilterGold('raw_phrases', bucketPhrases.values())
+print 'loaded gold'
 
 if __name__ == '__main__':
     # Clustering starts here ....
@@ -59,20 +61,24 @@ if __name__ == '__main__':
     singleAssignment = {}  # nearest neighbor
     completeAssignment = {}  # farthest neighbor
     averageAssignment = {}  # Average distance
+    clusterAssignments = {'ward': wardAssignment,
+                          'single': singleAssignment,
+                          'complete': completeAssignment,
+                          'average': averageAssignment}
 
-    for key in bucketPhrases:
-        wardAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 1)
-        singleAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 2)
-        completeAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 3)
-        averageAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key], 4)
+    for threshold in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
+        for key in bucketPhrases:
+            wardAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 1)
+            singleAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 2)
+            completeAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 3)
+            averageAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 4)
 
-    answer = evaluateCluster.makeId2sentenceList(wardAssignment)
-    print 'loaded answer ward'
-    gold = evaluateCluster.loadAndFilterGold('raw_phrases', answer)
-    print 'loaded gold'
-    clusterEvaluator = evaluateCluster.ClusterEvaluator(gold, answer)
-    print 'purity', clusterEvaluator.calPurity()
-    print 'NMI', clusterEvaluator.calNMI()
-    print 'Adjust RI', clusterEvaluator.calRI()
+        for clusterMethod in clusterAssignments:
+            answer = evaluateCluster.makeId2sentenceList(clusterAssignments[clusterMethod])
+            print '{} with threshold {}'.format(clusterMethod, str(threshold))
+            clusterEvaluator = evaluateCluster.ClusterEvaluator(gold, answer)
+            print 'purity', clusterEvaluator.calPurity()
+            print 'NMI', clusterEvaluator.calNMI()
+            print 'Adjust RI', clusterEvaluator.calRI()
     # answer=pickle.load(open('output.out',"rb"))
     # print clusterAssignment
