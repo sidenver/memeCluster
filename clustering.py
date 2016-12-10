@@ -7,6 +7,9 @@ from scipy.cluster.hierarchy import ward, dendrogram, fcluster, single, complete
 from collections import defaultdict
 import os
 import evaluateCluster
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
 
 # Location of the json file
 filename = 'updated_clusters.json'
@@ -65,6 +68,14 @@ if __name__ == '__main__':
                           'single': singleAssignment,
                           'complete': completeAssignment,
                           'average': averageAssignment}
+    wardScore = {}
+    singleScore = {}
+    completeScore = {}
+    averageScore = {}
+    clusterScore = {'ward': wardScore,
+                    'single': singleScore,
+                    'complete': completeScore,
+                    'average': averageScore}
 
     for threshold in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
         for key in bucketPhrases:
@@ -74,11 +85,21 @@ if __name__ == '__main__':
             averageAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 4)
 
         for clusterMethod in clusterAssignments:
+            clusterScore[clusterMethod][threshold] = {}
             answer = evaluateCluster.makeId2sentenceList(clusterAssignments[clusterMethod])
             print '{} with threshold {}'.format(clusterMethod, str(threshold))
             clusterEvaluator = evaluateCluster.ClusterEvaluator(gold, answer)
-            print 'purity', clusterEvaluator.calPurity()
-            print 'NMI', clusterEvaluator.calNMI()
-            print 'Adjust RI', clusterEvaluator.calRI()
+            clusterScore[clusterMethod][threshold]['Purity'] = clusterEvaluator.calPurity()
+            clusterScore[clusterMethod][threshold]['NMI'] = clusterEvaluator.calNMI()
+            clusterScore[clusterMethod][threshold]['Adjust_RI'] = clusterEvaluator.calRI()
+    matplotlib.style.use('ggplot')
+
+    for method in clusterScore:
+        df = pd.DataFrame(clusterScore[method])
+        df = df.transpose()
+        plt.figure()
+        df.plot()
+        plt.savefig('{}.png'.format(method))
+
     # answer=pickle.load(open('output.out',"rb"))
     # print clusterAssignment
