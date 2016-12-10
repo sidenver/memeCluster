@@ -92,14 +92,16 @@ if __name__ == '__main__':
             clusterScore[clusterMethod][threshold]['Purity'] = clusterEvaluator.calPurity()
             clusterScore[clusterMethod][threshold]['NMI'] = clusterEvaluator.calNMI()
             clusterScore[clusterMethod][threshold]['Adjust_RI'] = clusterEvaluator.calRI()
-    matplotlib.style.use('ggplot')
 
-    for method in clusterScore:
-        df = pd.DataFrame(clusterScore[method])
-        df = df.transpose()
-        plt.figure()
-        df.plot()
-        plt.savefig('{}.png'.format(method))
+    pickle.dump(clusterScore, open('plotResult.out', "wb"))
+
+    # matplotlib.style.use('ggplot')
+    # for method in clusterScore:
+    #     df = pd.DataFrame(clusterScore[method])
+    #     df = df.transpose()
+    #     plt.figure()
+    #     df.plot()
+    #     plt.savefig('{}.png'.format(method))
 
     # answer=pickle.load(open('output.out',"rb"))
     # print clusterAssignment
