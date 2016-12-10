@@ -7,9 +7,9 @@ from scipy.cluster.hierarchy import ward, dendrogram, fcluster, single, complete
 from collections import defaultdict
 import os
 import evaluateCluster
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib
+# import pandas as pd
+# import matplotlib.pyplot as plt
+# import matplotlib
 
 # Location of the json file
 filename = 'updated_clusters.json'
