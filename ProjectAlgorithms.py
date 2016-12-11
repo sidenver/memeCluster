@@ -51,6 +51,8 @@ def NeedleWunsch(str1, str2):
     L2 = str2.split()
     len1 = len(L1)
     len2 = len(L2)
+    Valid1 = [True if word in vocab else False for word in L1]
+    Valid2 = [True if word in vocab else False for word in L2]
     dp = numpy.zeros((len1 + 1, len2 + 1), int)
     for x in range(0, len1):
         dp[x][0] = x
@@ -59,7 +61,7 @@ def NeedleWunsch(str1, str2):
 
     for i in range(1, len1 + 1):
         for j in range(1, len2 + 1):
-            if L1[i-1] in vocab and L2[j - 1] in vocab:
+            if Valid1[i-1] and Valid2[j-1]:
                 dp[i][j] = min(dp[i - 1][j - 1] + (1-wordVectors.similarity(L1[i - 1], L2[j - 1]))/2.0, dp[i - 1][j] + 1, dp[i][j - 1] + 1)
             else:
                 dp[i][j] = min(dp[i - 1][j - 1] + (L1[i - 1] != L2[j - 1]), dp[i - 1][j] + 1, dp[i][j - 1] + 1)
