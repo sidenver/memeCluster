@@ -4,6 +4,8 @@ import simplejson as json
 import numpy
 from scipy.cluster.hierarchy import ward, dendrogram, fcluster
 from collections import defaultdict
+import sys
+from gensim.models import word2vec
 
 
 # Location of the json file
@@ -11,6 +13,25 @@ filename = 'updated_clusters.json'
 
 # Dictionary containing all the buckets
 buckets = json.loads(open(filename).read())
+
+
+def readWordVectors(filename):
+    sys.stderr.write('Reading vectors from file...\n')
+
+    model = word2vec.Word2Vec.load(filename)
+
+    vectorDim = len(model[model.vocab.iterkeys().next()])
+    wordVectors = model
+    sys.stderr.write('Loaded vectors from file...\n')
+
+    vocab = set([word for word in model.vocab])
+
+    sys.stderr.write('Finished reading vectors.\n')
+
+    return vocab, wordVectors, vectorDim
+
+w2vPath = '/fs/clip-scratch/shing/output/sgWordPhrase'
+vocab, wordVectors, vectorDim = readWordVectors(w2vPath)
 
 
 def diffCluster(matDist, threshold, labels):
@@ -22,6 +43,7 @@ def diffCluster(matDist, threshold, labels):
     return clusters_dict
 
 # Global Alignment method
+# model.similarity
 
 
 def NeedleWunsch(str1, str2):
@@ -37,7 +59,10 @@ def NeedleWunsch(str1, str2):
 
     for i in range(1, len1 + 1):
         for j in range(1, len2 + 1):
-            dp[i][j] = min(dp[i - 1][j - 1] + (L1[i - 1] != L2[j - 1]), dp[i - 1][j] + 1, dp[i][j - 1] + 1)
+            if L1[i-1] in vocab and L2[j - 1] in vocab:
+                dp[i][j] = min(dp[i - 1][j - 1] + (1-wordVectors.similarity(L1[i - 1], L2[j - 1]))/2.0, dp[i - 1][j] + 1, dp[i][j - 1] + 1)
+            else:
+                dp[i][j] = min(dp[i - 1][j - 1] + (L1[i - 1] != L2[j - 1]), dp[i - 1][j] + 1, dp[i][j - 1] + 1)
 
     return dp[len1][len2]
 
@@ -65,8 +90,11 @@ totalBuckNum = str(len(buckets))
 
 for idx, key in enumerate(buckets):
     print 'processing bucket: {}/{}'.format(str(idx), totalBuckNum)
+
     # Some threshold can be added here
     elem = buckets[key]
+    if len(elem) > 1000:
+        continue
     bucketPhrases[key] = []
     distMat[key] = numpy.zeros((len(elem), len(elem)), int)
     for i in range(0, len(elem)):
@@ -74,7 +102,7 @@ for idx, key in enumerate(buckets):
         for j in range(i + 1, len(elem)):
             distMat[key][i][j] = distMat[key][j][i] = NeedleWunsch(elem[i], elem[j])
             # print i + 1, '-', j + 1, '  : ', NeedleWunsch(elem[i], elem[j])
-    numpy.savetxt("/fs/clip-scratch/shing/meme/{}.csv".format(key), distMat[key], delimiter=",")
+    numpy.savetxt("/fs/clip-scratch/shing/memeW2V/{}.csv".format(key), distMat[key], delimiter=",")
 
 for key in buckets:
     clusterAssignment[key] = diffCluster(distMat[key], 0.5, bucketPhrases[key])
