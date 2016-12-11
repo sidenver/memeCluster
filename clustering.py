@@ -93,7 +93,7 @@ if __name__ == '__main__':
             clusterScore[clusterMethod][threshold]['NMI'] = clusterEvaluator.calNMI()
             clusterScore[clusterMethod][threshold]['Adjust_RI'] = clusterEvaluator.calRI()
 
-    pickle.dump(clusterScore, open('plotResult.out', "wb"))
+    pickle.dump(clusterScore, open('plotResultW2V.out', "wb"))
 
     # matplotlib.style.use('ggplot')
     # for method in clusterScore:
