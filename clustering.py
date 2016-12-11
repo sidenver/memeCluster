@@ -77,7 +77,7 @@ if __name__ == '__main__':
                     'complete': completeScore,
                     'average': averageScore}
 
-    for threshold in [0.0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
+    for threshold in [0.0, 0.025, 0.05, 0.1, 0.2, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]:
         for key in bucketPhrases:
             wardAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 1)
             singleAssignment[key] = diffCluster(distMat[key], threshold, bucketPhrases[key], 2)
