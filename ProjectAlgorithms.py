@@ -62,7 +62,7 @@ def NeedleWunsch(str1, str2):
     for i in range(1, len1 + 1):
         for j in range(1, len2 + 1):
             if Valid1[i-1] and Valid2[j-1]:
-                dp[i][j] = min(dp[i - 1][j - 1] + (1-wordVectors.similarity(L1[i - 1], L2[j - 1]))/2.0, dp[i - 1][j] + 1, dp[i][j - 1] + 1)
+                dp[i][j] = min(dp[i - 1][j - 1] + (-wordVectors.similarity(L1[i - 1], L2[j - 1])), dp[i - 1][j] + 1, dp[i][j - 1] + 1)
             else:
                 dp[i][j] = min(dp[i - 1][j - 1] + (L1[i - 1] != L2[j - 1]), dp[i - 1][j] + 1, dp[i][j - 1] + 1)
 
