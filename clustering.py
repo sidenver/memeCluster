@@ -43,7 +43,7 @@ bucketPhrases = {}  # Dictionary of Phrases. phraseList [bucketID] => Phrase Lis
 
 totalBuckNum = str(len(buckets))
 
-path = "/fs/clip-scratch/shing/meme/"
+path = "/fs/clip-scratch/shing/memeW2V/"
 
 for filename in os.listdir(path):
     if filename.split('.')[-1] == 'csv':
