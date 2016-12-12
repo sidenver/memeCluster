@@ -30,6 +30,9 @@ def readWordVectors(filename):
 
     return vocab, wordVectors, vectorDim
 
+vocab = set()
+
+# by commenting out the following two lines we can have vanilla NeedleWunsch
 w2vPath = '/fs/clip-scratch/shing/output/sgWordPhrase'
 vocab, wordVectors, vectorDim = readWordVectors(w2vPath)
 

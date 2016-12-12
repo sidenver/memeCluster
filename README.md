@@ -14,7 +14,7 @@ Run kmeans_clustering.py in the same repository to generate 1000 buckets. It wil
 
 *Step 3: Compute Distance Matrix*
 
-Run distanceW2V.py to calculate NeedleWunsch distance with word2vec and generate distance matrixes for all buckets and save them as csv files.
+Run distanceW2V.py to calculate NeedleWunsch distance with word2vec and generate distance matrixes for all buckets and save them as csv files. If you comment out the two lines of code that load the word2vec model, you can have the vanilla NeedleWunsch algorithm.
 
 *Step 4: Run Hierachical Clustering Algorithm and Evaluate*
 
