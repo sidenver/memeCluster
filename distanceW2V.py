@@ -71,19 +71,6 @@ def NeedleWunsch(str1, str2):
 # Local Alignment method
 
 
-def SmithWaterman(str1, str2):
-    L1 = str1.split()
-    L2 = str2.split()
-    len1 = len(L1)
-    len2 = len(L2)
-    dp = numpy.zeros((len1 + 1, len2 + 1), int)
-
-    for i in range(1, len1 + 1):
-        for j in range(1, len2 + 1):
-            dp[i][j] = max(0, dp[i - 1][j - 1] + (L1[i - 1] != L2[j - 1]), dp[i - 1][j] + 1, dp[i][j - 1] + 1)
-
-    return dp[len1][len2]
-
 distMat = {}  # Dictionary of Distance Matrices. distMat [bucketID] => Distance Matrix
 bucketPhrases = {}  # Dictionary of Phrases. phraseList [bucketID] => Phrase List in the bucket
 clusterAssignment = {}  # clusterAssignment [bucketID] => {dict[phrase] => ClusterID }
